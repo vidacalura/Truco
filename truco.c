@@ -3,18 +3,34 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
 
 // Declaração do tipo "Jogador", que representará os 2 jogadores
 typedef struct {
+
   int pontos;
   int rounds;
   char carta[3];
   int carta_naipe[3];
+
 } Jogador;
+
+typedef struct {
+
+  int naipe;
+  char valor;
+
+} Carta_mesa;
 
 void dar_mao(char carta[], int carta_naipe[], char baralho[]);
 char tirar_vira(char baralho[]);
-void mostrar_cartas(char carta[], int carta_naipe[], char vira);
+void mostrar_mao(char carta[], int carta_naipe[], char vira);
+void mostrar_mesa(char carta, int naipe);
+int definir_valor_cartas(char carta, int naipe, char vira);
 void embate();
 
 int main() {
@@ -26,12 +42,10 @@ int main() {
 
   // Declaração dos 2 jogadores
   Jogador player1, player2;
-
-  player1.pontos = 0;
-  player2.rounds = 0;
+  Carta_mesa carta_mesa_player1, carta_mesa_player2;
 
   char vira, jogada;
-  int rodada = 0, pontos_rodada;
+  int rodada = 0, pontos_rodada, rand_carta, carta_mesa1_valor, carta_mesa2_valor;
 
   // Início do jogo
   while (player1.pontos < 12 || player2.pontos < 12) {
@@ -53,52 +67,98 @@ int main() {
     player1.rounds = 0;
     player2.rounds = 0;
 
-    // Mostra as cartas ao jogador 1
-    mostrar_cartas(player1.carta, player1.carta_naipe, vira);
-
     // Player 1 começa
     if (rodada % 2 == 0) {
-      do {
+      while (player1.rounds < 2 && player2.rounds < 2){
+        // Mostra as cartas ao jogador 1
+        mostrar_mao(player1.carta, player1.carta_naipe, vira);
+
         // Recebe evento do jogador
-        do {
+        while (jogada != '1' && jogada != '2' && jogada != '3') {
           printf(" \
-        1: joga sua primeira carta na mão\n \
-        2: joga sua segunda carta na mão\n \
-        3: joga sua terceiraa carta na mão\n \
-        T: para trucar\n");
-          fflush(stdout);
+        1: joga sua primeira carta na mão (%c)\n \
+        2: joga sua segunda carta na mão (%c)\n \
+        3: joga sua terceira carta na mão (%c)\n \
+        T: para trucar\n", player1.carta[0], player1.carta[1], player1.carta[2]);
+
           // Registra o evento na variável "jogada"
+          printf("         ");
           jogada = getchar();
           fflush(stdin);
 
-          if (jogada != '1' && jogada != '2' && jogada != '3' &&
-              jogada != 'T' && jogada != 't') {
+          if (jogada == 'T' || jogada == 't'){
+            pontos_rodada = 3;
+            continue;
+          }
+          else if (jogada != '1' && jogada != '2' && jogada != '3' && jogada != 'T' && jogada != 't') {
             printf("Favor inserir uma ação válida");
           }
 
-        } while (jogada != '1' && jogada != '2' && jogada != '3' &&
-                 jogada != 'T' && jogada != 't');
+        } 
 
         // Realizar e mostrar evento
         switch(jogada){
           // Em caso de jogar a primeira carta
           case '1':
+            carta_mesa_player1.valor = player1.carta[0];
+            carta_mesa_player1.naipe = player1.carta_naipe[0];
+            player1.carta[0] = ' '; 
             break;
           // Em caso de jogar a segunda carta
           case '2':
+            carta_mesa_player1.valor = player1.carta[1];
+            carta_mesa_player1.naipe = player1.carta_naipe[1];
+            player1.carta[1] = ' ';
             break;
           // Em caso de jogar a terceira carta
           case '3':
-            break;
-          // Em caso de truco
-          case 'T':
-          case 't':
+            carta_mesa_player1.valor = player1.carta[2];
+            carta_mesa_player1.naipe = player1.carta_naipe[2];
+            player1.carta[2] = ' ';
             break;
         }
-        // Captar evento do adversário
-        // Repetir até que player1.rounds == 2 || player2.rounds == 2 
-        //(empate é round + 1 para ambos players)
-      } while (player1.rounds < 2 || player2.rounds < 2);
+
+        do {
+          // Define a carta do jogador 2
+          rand_carta = rand() % 3;
+          carta_mesa_player2.valor = player2.carta[rand_carta];
+          carta_mesa_player2.naipe = player2.carta_naipe[rand_carta];
+        } while (player2.carta[rand_carta] == ' ');
+        
+        player2.carta[rand_carta] = ' ';
+
+        sleep(1);
+        // Mostrar cartas na mesa
+        printf("        Sua carta foi jogada: \n");
+        mostrar_mesa(carta_mesa_player1.valor, carta_mesa_player1.naipe);
+        sleep(2);
+        printf("        Seu oponente jogou: \n");
+        mostrar_mesa(carta_mesa_player2.valor, carta_mesa_player2.naipe);
+        printf("\n");
+        fflush(stdout);
+        sleep(3);
+
+        // Ver qual carta é maior
+        carta_mesa1_valor = (carta_mesa_player1.valor, carta_mesa_player1.naipe);
+        carta_mesa2_valor = (carta_mesa_player2.valor, carta_mesa_player2.naipe);
+
+        if (carta_mesa1_valor > carta_mesa2_valor){
+          player1.rounds++;
+        }
+        else if (carta_mesa1_valor < carta_mesa2_valor){
+          player2.rounds++;
+        } 
+        else {
+          player1.rounds++;
+          player2.rounds++;
+        }
+      }
+      if (player1.rounds == 2) {
+        player1.pontos + pontos_rodada; 
+      }
+      else {
+        player2.pontos + pontos_rodada;
+      }
     }
     // Player 2 começa
     else {
@@ -137,71 +197,165 @@ char tirar_vira(char baralho[]) {
 }
 
 // Função que mostra as suas cartas
-void mostrar_cartas(char carta[], int carta_naipe[], char vira) {
+void mostrar_mao(char carta[], int carta_naipe[], char vira) {
 
   printf("        Vira = %c\n\n", vira);
 
   for (int i = 0; i < 3; i++) {
     if (carta[i] != ' ') {
-      switch (carta_naipe[i]) {
-      case 0:
-        printf(" \
-        +-----------+\n \
-        |Ouros      |\n \
-        |           |\n \
-        |           |\n \
-        |     %c     |\n \
-        |           |\n \
-        |           |\n \
-        |           |\n \
-        +-----------+",
-               carta[i]);
-        break;
-      case 1:
-        printf(" \
-        +-----------+\n \
-        |Espadas    |\n \
-        |           |\n \
-        |           |\n \
-        |     %c     |\n \
-        |           |\n \
-        |           |\n \
-        |           |\n \
-        +-----------+",
-               carta[i]);
-        break;
-      case 2:
-        printf(" \
-        +-----------+\n \
-        |Copas      |\n \
-        |           |\n \
-        |           |\n \
-        |     %c     |\n \
-        |           |\n \
-        |           |\n \
-        |           |\n \
-        +-----------+",
-               carta[i]);
-        break;
-      case 3:
-        printf(" \
-        +-----------+\n \
-        |Paus       |\n \
-        |           |\n \
-        |           |\n \
-        |     %c     |\n \
-        |           |\n \
-        |           |\n \
-        |           |\n \
-        +-----------+",
-               carta[i]);
-        break;
+        for (int j = 0, n = 11; j < n; j++){
+          printf("\n");
+          if (j == 0 || j == n - 1){
+            printf("          +-----------+");
+          }
+          else if (j == 5){
+            switch (carta_naipe[i]){
+              case 0:
+                printf("          |     ♦     |");
+                break;
+              case 1:
+                printf("          |     ♠     |");
+                break;
+              case 2:
+                printf("          |     ♥     |");
+                break;
+              case 3:
+                printf("          |     ♣     |");
+                break;
+            }  
+          }
+          else if (j == 1) {
+            printf("          | %c         |", carta[i]);
+          }
+          else if (j == n - 2){
+            printf("          |         %c |", carta[i]);
+          }
+          else {
+            printf("          |           |");
+          }
+        }
       }
+      printf("\n");
     }
-    printf("\n");
-  }
   fflush(stdout);
 }
+
+void mostrar_mesa(char carta, int carta_naipe){
+
+  for (int j = 0, n = 11; j < n; j++){
+    printf("\n");
+    if (j == 0 || j == n - 1){
+      printf("          +-----------+");
+    }
+    else if (j == 5){
+      switch (carta_naipe){
+        case 0:
+          printf("          |     ♦     |");
+          break;
+        case 1:
+          printf("          |     ♠     |");
+          break;
+        case 2:
+          printf("          |     ♥     |");
+          break;
+        case 3:
+          printf("          |     ♣     |");
+          break;
+        }  
+      }
+      else if (j == 1) {
+        printf("          | %c         |", carta);
+      }
+      else if (j == n - 2){
+        printf("          |         %c |", carta);
+      }
+      else {
+        printf("          |           |");
+      }
+    }
+
+  printf("\n");
+  fflush(stdout);
+
+}
+
+int definir_valor_cartas(char carta, int naipe, char vira){
+
+  int valor_carta, valor_vira;
+
+  switch (vira){
+    case '4':
+      valor_vira = 0;
+      break;
+    case '5':
+      valor_vira = 1;
+      break;
+    case '6':
+      valor_vira = 2;
+      break;
+    case '7':
+      valor_vira = 3;
+      break;
+    case 'Q':
+      valor_vira = 4;
+      break;
+    case 'J':
+      valor_vira = 5;
+      break;
+    case 'K':
+      valor_vira = 6;
+      break;
+    case 'A':
+      valor_vira = 7;
+      break;
+    case '2':
+      valor_vira = 8;
+      break;
+    case '3':
+      valor_vira = 9;
+  }
+
+  switch (carta){
+    case '4':
+      valor_carta = 0;
+      break;
+    case '5':
+      valor_carta = 1;
+      break;
+    case '6':
+      valor_carta = 2;
+      break;
+    case '7':
+      valor_carta = 3;
+      break;
+    case 'Q':
+      valor_carta = 4;
+      break;
+    case 'J':
+      valor_carta = 5;
+      break;
+    case 'K':
+      valor_carta = 6;
+      break;
+    case 'A':
+      valor_carta = 7;
+      break;
+    case '2':
+      valor_carta = 8;
+      break;
+    case '3':
+      valor_carta = 9;
+  }
+
+  if (valor_carta == valor_vira + 1){
+    valor_carta = 10 + naipe;
+  }
+
+  return valor_carta;
+
+}
+
+
 
 ///////////////////////////
 //
@@ -212,6 +366,11 @@ void mostrar_cartas(char carta[], int carta_naipe[], char vira) {
 /*
 
 Podem haver 2 cartas de mesmo número e mesmo naipe em jogo
-Jogador pode jogar uma carta que não tem mais na mão
+Jogador pode jogar uma carta que não tem mais na mão (carta = ' ')
+Empatar na última rodada da vitória a ambos os jogadores
 
 */
+
+// Fazer função para substituir linhas 74 a 117
+// Permitir emitir (virar) a carta
+// Fazer caso de truco
