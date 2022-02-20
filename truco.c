@@ -160,9 +160,6 @@ int main() {
         player2.pontos + pontos_rodada;
       }
     }
-    // Player 2 começa
-    else {
-    }
 
     rodada++;
   }
@@ -371,6 +368,8 @@ Empatar na última rodada da vitória a ambos os jogadores
 
 */
 
-// Fazer função para substituir linhas 74 a 117
-// Permitir emitir (virar) a carta
+// Permitir omitir (virar) a carta
 // Fazer caso de truco
+
+// Criar mais funções 
+// Formatar melhor o código
