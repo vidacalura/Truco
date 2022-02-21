@@ -31,7 +31,6 @@ char tirar_vira(char baralho[]);
 void mostrar_mao(char carta[], int carta_naipe[], char vira);
 void mostrar_mesa(char carta, int naipe);
 int definir_valor_cartas(char carta, int naipe, char vira);
-void embate();
 
 int main() {
   // Define o idioma para português
@@ -45,7 +44,7 @@ int main() {
   Carta_mesa carta_mesa_player1, carta_mesa_player2;
 
   char vira, jogada;
-  int rodada = 0, pontos_rodada, rand_carta, carta_mesa1_valor, carta_mesa2_valor;
+  int vez = 0, rodada = 0, pontos_rodada, rand_carta, carta_mesa1_valor, carta_mesa2_valor;
 
   // Início do jogo
   while (player1.pontos < 12 || player2.pontos < 12) {
@@ -67,101 +66,134 @@ int main() {
     player1.rounds = 0;
     player2.rounds = 0;
 
-    // Player 1 começa
-    if (rodada % 2 == 0) {
-      while (player1.rounds < 2 && player2.rounds < 2){
-        // Mostra as cartas ao jogador 1
-        mostrar_mao(player1.carta, player1.carta_naipe, vira);
+    vez = rodada;
 
-        // Recebe evento do jogador
-        while (jogada != '1' && jogada != '2' && jogada != '3') {
-          printf(" \
+    // Início da rodada
+    while (player1.rounds < 2 && player2.rounds < 2){
+
+      jogada = ' ';
+
+      do {
+        // Define a carta do jogador 2
+        rand_carta = rand() % 3;
+        carta_mesa_player2.valor = player2.carta[rand_carta];
+        carta_mesa_player2.naipe = player2.carta_naipe[rand_carta];
+      } while (player2.carta[rand_carta] == ' ');
+        
+      player2.carta[rand_carta] = ' ';
+
+      // Mostra as cartas ao jogador 1
+      mostrar_mao(player1.carta, player1.carta_naipe, vira);
+      sleep(2);
+
+      if (vez % 2 == 1){
+        printf("        Seu oponente jogou: \n");
+        mostrar_mesa(carta_mesa_player2.valor, carta_mesa_player2.naipe);
+        printf("\n");
+        fflush(stdout);
+        sleep(1);
+      }
+
+
+      // Recebe evento do jogador
+      while (jogada != '1' && jogada != '2' && jogada != '3') {
+        printf(" \
         1: joga sua primeira carta na mão (%c)\n \
         2: joga sua segunda carta na mão (%c)\n \
         3: joga sua terceira carta na mão (%c)\n \
         T: para trucar\n", player1.carta[0], player1.carta[1], player1.carta[2]);
 
-          // Registra o evento na variável "jogada"
-          printf("         ");
-          jogada = getchar();
-          fflush(stdin);
+        // Registra o evento na variável "jogada"
+        printf("         ");
+        jogada = getchar();
+        fflush(stdin);
 
-          if (jogada == 'T' || jogada == 't'){
-            pontos_rodada = 3;
-            continue;
-          }
-          else if (jogada != '1' && jogada != '2' && jogada != '3' && jogada != 'T' && jogada != 't') {
-            printf("Favor inserir uma ação válida");
-          }
-
-        } 
-
-        // Realizar e mostrar evento
-        switch(jogada){
-          // Em caso de jogar a primeira carta
-          case '1':
-            carta_mesa_player1.valor = player1.carta[0];
-            carta_mesa_player1.naipe = player1.carta_naipe[0];
-            player1.carta[0] = ' '; 
-            break;
-          // Em caso de jogar a segunda carta
-          case '2':
-            carta_mesa_player1.valor = player1.carta[1];
-            carta_mesa_player1.naipe = player1.carta_naipe[1];
-            player1.carta[1] = ' ';
-            break;
-          // Em caso de jogar a terceira carta
-          case '3':
-            carta_mesa_player1.valor = player1.carta[2];
-            carta_mesa_player1.naipe = player1.carta_naipe[2];
-            player1.carta[2] = ' ';
-            break;
+        if (jogada == 'T' || jogada == 't'){
+          pontos_rodada = 3;
+          continue;
+        }
+        else if (jogada != '1' && jogada != '2' && jogada != '3' && jogada != 'T' && jogada != 't') {
+          printf("Favor inserir uma ação válida");
         }
 
-        do {
-          // Define a carta do jogador 2
-          rand_carta = rand() % 3;
-          carta_mesa_player2.valor = player2.carta[rand_carta];
-          carta_mesa_player2.naipe = player2.carta_naipe[rand_carta];
-        } while (player2.carta[rand_carta] == ' ');
-        
-        player2.carta[rand_carta] = ' ';
+      } 
 
-        sleep(1);
-        // Mostrar cartas na mesa
-        printf("        Sua carta foi jogada: \n");
-        mostrar_mesa(carta_mesa_player1.valor, carta_mesa_player1.naipe);
-        sleep(2);
+      // Realizar e mostrar evento
+      switch(jogada){
+        // Em caso de jogar a primeira carta
+        case '1':
+          carta_mesa_player1.valor = player1.carta[0];
+          carta_mesa_player1.naipe = player1.carta_naipe[0];
+          player1.carta[0] = ' '; 
+          break;
+        // Em caso de jogar a segunda carta
+        case '2':
+          carta_mesa_player1.valor = player1.carta[1];
+          carta_mesa_player1.naipe = player1.carta_naipe[1];
+          player1.carta[1] = ' ';
+          break;
+        // Em caso de jogar a terceira carta
+        case '3':
+          carta_mesa_player1.valor = player1.carta[2];
+          carta_mesa_player1.naipe = player1.carta_naipe[2];
+          player1.carta[2] = ' ';
+          break;
+      }
+
+      sleep(1);
+      // Mostrar cartas na mesa
+      printf("        Sua carta foi jogada: \n");
+      mostrar_mesa(carta_mesa_player1.valor, carta_mesa_player1.naipe);
+      sleep(2);
+
+      if (vez % 2 == 0){
         printf("        Seu oponente jogou: \n");
         mostrar_mesa(carta_mesa_player2.valor, carta_mesa_player2.naipe);
         printf("\n");
         fflush(stdout);
         sleep(3);
-
-        // Ver qual carta é maior
-        carta_mesa1_valor = (carta_mesa_player1.valor, carta_mesa_player1.naipe);
-        carta_mesa2_valor = (carta_mesa_player2.valor, carta_mesa_player2.naipe);
-
-        if (carta_mesa1_valor > carta_mesa2_valor){
-          player1.rounds++;
-        }
-        else if (carta_mesa1_valor < carta_mesa2_valor){
-          player2.rounds++;
-        } 
-        else {
-          player1.rounds++;
-          player2.rounds++;
-        }
       }
-      if (player1.rounds == 2) {
-        player1.pontos + pontos_rodada; 
+
+      // Ver qual carta é maior
+      carta_mesa1_valor = (carta_mesa_player1.valor, carta_mesa_player1.naipe);
+      carta_mesa2_valor = (carta_mesa_player2.valor, carta_mesa_player2.naipe);
+
+      if (carta_mesa1_valor > carta_mesa2_valor){
+        player1.rounds++;
+        if (vez % 2 == 1)
+          vez++;
       }
+      else if (carta_mesa1_valor < carta_mesa2_valor){
+        player2.rounds++;
+        if (vez % 2 == 0)
+          vez++;
+      } 
       else {
-        player2.pontos + pontos_rodada;
+        player1.rounds++;
+        player2.rounds++;
       }
     }
+    if (player1.rounds == 2) {
+      player1.pontos + pontos_rodada;
+      printf("Você venceu a rodada! :)");
+    }
+    else {
+      player2.pontos + pontos_rodada;
+      printf("Você perdeu a rodada :(");
+    }
+    
+    printf("\n\n \
+      |||//////////////////////////\n \
+      |||\n \
+      ||| Placar:\n \
+      |||     Você: %d\n \
+      |||     Bot:  %d\n \
+      |||\n \
+      |||//////////////////////////\n\n", player1.pontos, player2.pontos);
+    fflush(stdout);
 
     rodada++;
+
   }
 
   return 0;
@@ -196,7 +228,8 @@ char tirar_vira(char baralho[]) {
 // Função que mostra as suas cartas
 void mostrar_mao(char carta[], int carta_naipe[], char vira) {
 
-  printf("        Vira = %c\n\n", vira);
+  printf("        Vira = %c\n", vira);
+  printf("        Sua mão:\n");
 
   for (int i = 0; i < 3; i++) {
     if (carta[i] != ' ') {
@@ -232,8 +265,9 @@ void mostrar_mao(char carta[], int carta_naipe[], char vira) {
           }
         }
       }
-      printf("\n");
+//      printf("\n");
     }
+  printf("\n");
   fflush(stdout);
 }
 
