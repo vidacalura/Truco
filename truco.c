@@ -12,7 +12,6 @@
 // Declaração do tipo "Jogador", que representará os 2 jogadores
 typedef struct {
 
-  int pontos;
   int rounds;
   char carta[3];
   int carta_naipe[3];
@@ -44,10 +43,13 @@ int main() {
   Carta_mesa carta_mesa_player1, carta_mesa_player2;
 
   char vira, jogada;
-  int vez = 0, rodada = 0, pontos_rodada, rand_carta, carta_mesa1_valor, carta_mesa2_valor;
+  int vez = 0, rodada = 0, pontos_rodada, rand_carta, carta_mesa1_valor = 0, carta_mesa2_valor = 0;
+
+  int player1_pontos = 0;
+  int player2_pontos = 0;
 
   // Início do jogo
-  while (player1.pontos < 12 || player2.pontos < 12) {
+  while (player1_pontos < 12 || player2_pontos < 12) {
     // Declaração do baralho
     char baralho[] = {'4', '4', '4', '4', '5', '5', '5', '5', '6', '6',
                       '6', '6', '7', '7', '7', '7', 'Q', 'Q', 'Q', 'Q',
@@ -112,6 +114,9 @@ int main() {
           pontos_rodada = 3;
           continue;
         }
+        if (player1.carta[(int) jogada - 1] == ' '){
+          jogada = ' ';
+        }
         else if (jogada != '1' && jogada != '2' && jogada != '3' && jogada != 'T' && jogada != 't') {
           printf("Favor inserir uma ação válida");
         }
@@ -155,8 +160,8 @@ int main() {
       }
 
       // Ver qual carta é maior
-      carta_mesa1_valor = (carta_mesa_player1.valor, carta_mesa_player1.naipe);
-      carta_mesa2_valor = (carta_mesa_player2.valor, carta_mesa_player2.naipe);
+      carta_mesa1_valor = definir_valor_cartas(carta_mesa_player1.valor, carta_mesa_player1.naipe, vira);
+      carta_mesa2_valor = definir_valor_cartas(carta_mesa_player2.valor, carta_mesa_player2.naipe, vira);
 
       if (carta_mesa1_valor > carta_mesa2_valor){
         player1.rounds++;
@@ -174,11 +179,11 @@ int main() {
       }
     }
     if (player1.rounds == 2) {
-      player1.pontos + pontos_rodada;
+      player1_pontos + pontos_rodada;
       printf("Você venceu a rodada! :)");
     }
     else {
-      player2.pontos + pontos_rodada;
+      player2_pontos + pontos_rodada;
       printf("Você perdeu a rodada :(");
     }
     
@@ -189,7 +194,7 @@ int main() {
       |||     Você: %d\n \
       |||     Bot:  %d\n \
       |||\n \
-      |||//////////////////////////\n\n", player1.pontos, player2.pontos);
+      |||//////////////////////////\n\n", player1_pontos, player2_pontos);
     fflush(stdout);
 
     rodada++;
@@ -344,6 +349,7 @@ int definir_valor_cartas(char carta, int naipe, char vira){
       break;
     case '3':
       valor_vira = 9;
+      break;
   }
 
   switch (carta){
@@ -376,6 +382,7 @@ int definir_valor_cartas(char carta, int naipe, char vira){
       break;
     case '3':
       valor_carta = 9;
+      break;
   }
 
   if (valor_carta == valor_vira + 1){
@@ -398,7 +405,8 @@ int definir_valor_cartas(char carta, int naipe, char vira){
 
 Podem haver 2 cartas de mesmo número e mesmo naipe em jogo
 Jogador pode jogar uma carta que não tem mais na mão (carta = ' ')
-Empatar na última rodada da vitória a ambos os jogadores
+Empatar na última rodada dá vitória a ambos os jogadores
+Pontos não são marcados
 
 */
 
