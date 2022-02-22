@@ -136,19 +136,19 @@ int main() {
             break;
           case 't':
           case 'T':
-            int truco_proposal = rand() % 2;
-            if (truco_proposal == 1){
+//            int truco_proposal = rand() % 2;
+//            if (truco_proposal == 1){
               // Se o bot aceitar
               pontos_rodada = 3;
               printf("\nTruco aceito!\n");
-            }
-            else{
-              player1.rounds = 2;
-              printf("\nSeu oponente fugiu do truco!\n");
-              break;
-            }
-            break;
-        }
+//            }
+//            else{
+//              player1.rounds = 2;
+//              printf("\nSeu oponente fugiu do truco!\n");
+//              break;
+//            }
+//            break;
+//        }
 
         if (carta_mesa_player1.valor == ' '){
           jogada = ' ';
