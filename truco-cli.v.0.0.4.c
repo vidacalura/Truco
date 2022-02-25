@@ -439,7 +439,7 @@ int definir_valor_cartas(char carta, int naipe, char vira){
 
 /*
 
-Texto aparece duas vezes quando pedindo uma jogada
+Nenhum bug relatado até o momento :)
 
 */
 
