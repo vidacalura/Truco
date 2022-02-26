@@ -98,8 +98,8 @@ int main() {
 
       // Caso seja a vez do jogador 2, sua carta é mostrada ao usuário
       if (vez % 2 == 1){
-        // Chance de 1 em 32 do bot trucar
-        truco_bot = rand() % 16;
+        // Chance de 1 em 12 do bot trucar
+        truco_bot = rand() % 12;
         if (truco_bot == 1 && pontos_rodada == 1){
           jogada = trucar_bot();
 
@@ -182,7 +182,7 @@ int main() {
           // Em caso de truco
           case 't':
           case 'T':
-            int truco_proposal = rand() % 16;
+            int truco_proposal = rand() % 2;
             if (truco_proposal == 1){
               // Se o bot aceitar
               pontos_rodada = 3;
@@ -217,8 +217,8 @@ int main() {
 
       // Caso seja a vez do jogador 1 começar, a carta do jogador 2 é mostrada ao usuário
       if (vez % 2 == 0){
-        // Chance de 1 em 32 do bot trucar
-        truco_bot = rand() % 2;
+        // Chance de 1 em 12 do bot trucar
+        truco_bot = rand() % 12;
         if (truco_bot == 1 && pontos_rodada == 1){
           jogada = trucar_bot();
 
