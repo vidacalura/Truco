@@ -110,6 +110,7 @@ int main() {
               break;
 
             case 'n':
+              player2.rounds = 2;
               goto FIM_RODADA;
               break;
 
@@ -119,13 +120,14 @@ int main() {
               int seis_proposal = rand() % 3;
               if (seis_proposal == 0){
                 // Se o bot recusar
+                pontos_rodada = 3;
                 player1.rounds = 2;
                 printf("\n        Seu oponente fugiu!\n\n");
                 goto FIM_RODADA;
               }
               else{
                 // Se o bot aceitar
-                pontos_rodada = 3;
+                pontos_rodada = 6;
                 printf("\n\n        6 aceito!\n\n");
                 break;
               }
@@ -227,6 +229,7 @@ int main() {
               break;
 
             case 'n':
+              player2.rounds = 2;
               goto FIM_RODADA;
               break;
 
@@ -236,13 +239,14 @@ int main() {
               int seis_proposal = rand() % 3;
               if (seis_proposal == 0){
                 // Se o bot recusar
+                pontos_rodada = 3;
                 player1.rounds = 2;
                 printf("\n        Seu oponente fugiu!\n\n");
                 goto FIM_RODADA;
               }
               else{
                 // Se o bot aceitar
-                pontos_rodada = 3;
+                pontos_rodada = 6;
                 printf("\n\n        6 aceito!\n\n");
                 break;
               }
