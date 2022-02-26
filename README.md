@@ -1,6 +1,6 @@
 ### Truco-cli
 
-O Truco-cli nada mais é que o famoso jogo de cartas brasileiros "truco" para consoles. Nele você joga contra um bot até conseguir 12 pontos, seguindo as regras padrões do truco
+O Truco-cli nada mais é que o famoso jogo de cartas brasileiros "truco" para consoles. Nele você joga contra um bot até conseguir 12 pontos, seguindo as regras padrão do truco.
 
 #
 ### Como jogar?
@@ -13,7 +13,7 @@ Para GCC:
     gcc nome do arquivo -o truco
     ./truco
 
-Caso você use windows 7/10/11 (contanto que seu computador seja 64 bits), você pode simplesmente pegar o executável disponibilizado juntos dos códigos (o arquivo sem .c no final).
+Caso você use windows 7/10/11 (contanto que seu computador seja 64 bits), você pode simplesmente pegar o executável disponibilizado juntos dos códigos (o arquivo com .exe no final).
 
 
 #
