@@ -15,6 +15,7 @@ Para GCC:
 
 Caso você use windows 7/8/10/11 (contanto que seu computador seja 64 bits), você pode simplesmente pegar o executável disponibilizado juntos dos códigos (o arquivo com .exe no final).
 
+Ou então jogue online pelo link: https://onlinegdb.com/A4qNAeLoz
 
 #
 Caso você encontre algum problema durante a jogatina, tente abrir uma issue neste repositório, e eu irei tentar resolver o problema assim que possível.
