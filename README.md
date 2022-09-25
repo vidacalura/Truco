@@ -13,7 +13,7 @@ Para GCC:
     gcc nome do arquivo -o truco
     ./truco
 
-Caso você use windows 7/8/10/11 (contanto que seu computador seja 64 bits), você pode simplesmente pegar o executável disponibilizado juntos dos códigos (o arquivo com .exe no final).
+Caso você use windows 7/8/10/11 (contanto que seu computador seja 64 bits), você pode simplesmente pegar o executável em "releases".
 
 Ou então jogue online pelo link: https://onlinegdb.com/A4qNAeLoz
 
